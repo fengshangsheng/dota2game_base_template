@@ -104,6 +104,10 @@ export class GameMode {
                 // Add lua ability to the unit
                 unit.AddAbility("meepo_earthbind_ts_example");
             }
+            if (!unit.HasAbility("typescript_skywrath_mage_arcane_bolt")) {
+                // Add lua ability to the unit
+                unit.AddAbility("typescript_skywrath_mage_arcane_bolt");
+            }
         }
     }
 }
