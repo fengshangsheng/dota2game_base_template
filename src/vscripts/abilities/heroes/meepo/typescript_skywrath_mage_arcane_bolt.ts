@@ -2,16 +2,27 @@ import { BaseAbility, registerAbility } from "../../../lib/dota_ts_adapter";
 
 @registerAbility()
 export class typescript_skywrath_mage_arcane_bolt extends BaseAbility {
+    // 音频
     sound_cast: string = "Hero_SkywrathMage.ArcaneBolt.Cast";
     sound_impact: string = "Hero_SkywrathMage.ArcaneBolt.Impact";
-    // 粒子效果
+    // 粒子效果 particles/units/heroes/hero_skywrath_mage/skywrath_mage_arcane_bolt.vpcf
     projectile_arcane_bolt: string = "particles/units/heroes/hero_skywrath_mage/skywrath_mage_arcane_bolt.vpcf";
+
+    Precache(context: CScriptPrecacheContext) {
+        print('===========Precache');
+        // 预加载粒子
+        PrecacheResource("particle", this.projectile_arcane_bolt, context);
+
+        // 预加载官方Skywrath音效脚本
+        PrecacheResource("soundfile", "soundevents/game_sounds_heroes/game_sounds_skywrath_mage.vsndevts", context);
+    }
 
     // 开始施法
     OnSpellStart() {
         print('==OnSpellStart2');
         const target = this.GetCursorTarget();
         print('==target', target)
+
 
         const bolt_speed = this.GetSpecialValueFor("bolt_speed");
         const bolt_vision = this.GetSpecialValueFor("bolt_vision");
