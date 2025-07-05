@@ -14,6 +14,12 @@ export class GameMode {
     public static Precache(this: void, context: CScriptPrecacheContext) {
         PrecacheResource("particle", "particles/units/heroes/hero_meepo/meepo_earthbind_projectile_fx.vpcf", context);
         PrecacheResource("soundfile", "soundevents/game_sounds_heroes/game_sounds_meepo.vsndevts", context);
+
+
+        // 预加载粒子
+        PrecacheResource("particle", "particles/units/heroes/hero_skywrath_mage/skywrath_mage_arcane_bolt.vpcf", context);
+        // 预加载官方Skywrath音效脚本
+        PrecacheResource("soundfile", "soundevents/game_sounds_heroes/game_sounds_skywrath_mage.vsndevts", context);
     }
 
     public static Activate(this: void) {
@@ -53,8 +59,11 @@ export class GameMode {
         GameRules.SetCustomGameTeamMaxPlayers(DotaTeam.GOODGUYS, 3);
         GameRules.SetCustomGameTeamMaxPlayers(DotaTeam.BADGUYS, 3);
 
+        GameRules.SetHeroSelectionTime(10); // 选择英雄阶段的持续时间
+        GameRules.SetShowcaseTime(8); // 选完英雄的展示时间
+        GameRules.SetPreGameTime(5); // 进入游戏后号角吹响前的准备时间
+
         GameRules.SetShowcaseTime(0);
-        GameRules.SetHeroSelectionTime(heroSelectionTime);
     }
 
     public OnStateChange(): void {
@@ -100,14 +109,19 @@ export class GameMode {
         const unit = EntIndexToHScript(event.entindex) as CDOTA_BaseNPC; // Cast to npc since this is the 'npc_spawned' event
         // Give all real heroes (not illusions) the meepo_earthbind_ts_example spell
         if (unit.IsRealHero()) {
-            if (!unit.HasAbility("meepo_earthbind_ts_example")) {
-                // Add lua ability to the unit
-                unit.AddAbility("meepo_earthbind_ts_example");
-            }
-            if (!unit.HasAbility("typescript_skywrath_mage_arcane_bolt")) {
-                // Add lua ability to the unit
-                unit.AddAbility("typescript_skywrath_mage_arcane_bolt");
-            }
+            Timers.CreateTimer(3, () => {
+                if (!unit.HasAbility("meepo_earthbind_ts_example")) {
+                    // Add lua ability to the unit
+                    unit.AddAbility("meepo_earthbind_ts_example");
+                }
+                if (!unit.HasAbility("typescript_skywrath_mage_arcane_bolt")) {
+                    // Add lua ability to the unit
+                    unit.AddAbility("typescript_skywrath_mage_arcane_bolt");
+                }
+
+                unit.HeroLevelUp(true);
+                unit.HeroLevelUp(true);
+            })
         }
     }
 }
